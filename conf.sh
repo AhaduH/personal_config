@@ -22,12 +22,14 @@ safe_link() {
 
 keyd_setup() {
 	# remaps capslock to esc and esc to capslock
-	if [[ ! -d "keyd" ]]; then
+	if ! command -v keyd >/dev/null 2>&1 ; then
+		echo "installing keyd..."
 		git clone https://github.com/rvaiya/keyd || fatal 'failed to clone keyd git repo'
+		cd keyd
+		make || fatal 'failed to make'
+		sudo make install || fatal 'failed to make install'
+		cd ..
 	fi
-	cd keyd
-	make && sudo make install
-	cd ..
 	sudo systemctl enable --now keyd
 	sudo cp default.conf /etc/keyd/default.conf
 	sudo keyd reload
@@ -42,7 +44,10 @@ get_all_setup_funcs() {
 }
 
 main() {
-	if [[ "$1" == "all" ]]; then 
+	if [[ "$#" -eq 0 ]]; then
+		echo "[usage] ./conf.sh <args>"
+		echo "args can be list of different configs, or simply the keyword 'all'"
+	elif [[ "$1" == "all" ]]; then 
 		mapfile -t setup_funcs < <(get_all_setup_funcs)
 		for func in "${setup_funcs[@]}"; do
 			echo "running $func"
