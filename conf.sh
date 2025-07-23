@@ -7,6 +7,8 @@ fatal() {
 	exit 1
 }
 
+HOME_SOURCED_CONFIGS=(vimrc bashrc tmux.conf)
+
 safe_link() {
     local src=$1
     local dest=$2
@@ -20,11 +22,19 @@ safe_link() {
     ln -nsf "$PWD/$src" "$dest"
 }
 
+for config in "${HOME_SOURCED_CONFIGS[@]}"; do
+	eval "
+	${config}_setup() {
+		safe_link ${config} ~/.${config}	
+	}
+	"
+done
+
 keyd_setup() {
 	# remaps capslock to esc and esc to capslock
 	if ! command -v keyd >/dev/null 2>&1 ; then
 		echo "installing keyd..."
-		git clone https://github.com/rvaiya/keyd || fatal 'failed to clone keyd git repo'
+		git clone --branch v2.5.0 --depth=1 https://github.com/rvaiya/keyd.git  || fatal 'failed to clone keyd git repo'
 		cd keyd
 		make || fatal 'failed to make'
 		sudo make install || fatal 'failed to make install'
@@ -35,10 +45,6 @@ keyd_setup() {
 	sudo keyd reload
 }
 
-vimrc_setup() {
-	safe_link vimrc ~/.vimrc
-}
-	
 get_all_setup_funcs() {
 	declare -F | awk '{print $3}' | grep '_setup$'
 }
@@ -46,7 +52,8 @@ get_all_setup_funcs() {
 main() {
 	if [[ "$#" -eq 0 ]]; then
 		echo "[usage] ./conf.sh <args>"
-		echo "args can be list of different configs, or simply the keyword 'all'"
+		echo "args can be list of different configs as seen in this current directory ($PWD)" 
+		echo "OR simply the keyword 'all'"
 	elif [[ "$1" == "all" ]]; then 
 		mapfile -t setup_funcs < <(get_all_setup_funcs)
 		for func in "${setup_funcs[@]}"; do
