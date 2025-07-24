@@ -7,7 +7,7 @@ fatal() {
 	exit 1
 }
 
-HOME_SOURCED_CONFIGS=(vimrc bashrc tmux.conf)
+DOTFILES=(vimrc bashrc tmux.conf)
 
 safe_link() {
     local src=$1
@@ -22,7 +22,7 @@ safe_link() {
     ln -nsf "$PWD/$src" "$dest"
 }
 
-for config in "${HOME_SOURCED_CONFIGS[@]}"; do
+for config in "${DOTFILES[@]}"; do
 	eval "
 	${config}_setup() {
 		safe_link ${config} ~/.${config}	
