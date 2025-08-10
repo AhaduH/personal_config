@@ -25,7 +25,7 @@ safe_link() {
 for config in "${DOTFILES[@]}"; do
 	eval "
 	${config}_setup() {
-		safe_link ${config} ~/.${config}	
+		safe_link "${config}" "${HOME}/.${config}"	
 	}
 	"
 done
@@ -43,6 +43,11 @@ keyd_setup() {
 	sudo systemctl enable --now keyd
 	sudo cp default.conf /etc/keyd/default.conf
 	sudo keyd reload
+}
+
+nvim_setup() {
+    mkdir -p $HOME/.config
+    safe_link nvim $HOME/.config/nvim 
 }
 
 get_all_setup_funcs() {
