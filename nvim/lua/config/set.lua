@@ -12,3 +12,5 @@ vim.opt.smartindent = true
 vim.opt.wrap = false
 
 vim.opt.winborder = "rounded"
+
+vim.opt.signcolumn = "yes"
