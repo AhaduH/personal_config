@@ -16,6 +16,8 @@ return {
             vim.api.nvim_create_autocmd('LspAttach', {
                 callback = function(ev)
                     local client = vim.lsp.get_client_by_id(ev.data.client_id)
+                    if not client then return end
+
                     if client:supports_method('textDocument/completion') then
                         vim.opt.completeopt = { "menu", "menuone", "noinsert", "fuzzy" }
                         vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
@@ -23,6 +25,16 @@ return {
                         vim.keymap.set('i', '<C-Space>', function ()
                             vim.lsp.completion.get()
                         end)
+                    end
+
+                    if client:supports_method('textDocument/formatting') then
+                        -- format current buffer on save
+                        vim.api.nvim_create_autocmd('BufWritePre', {
+                            buffer = ev.buf,
+                            callback = function()
+                                vim.lsp.buf.format({ buffnr = ev.buf, id = client.id })
+                            end,
+                        })
                     end
 
                     -- location for any lsp-specific remaps
