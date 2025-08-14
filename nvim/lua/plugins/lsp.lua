@@ -22,12 +22,13 @@ return {
                         vim.opt.completeopt = { "menu", "menuone", "noinsert", "fuzzy" }
                         vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
                         -- trigger lsp completion (ex: after backspace, turn back on)
-                        vim.keymap.set('i', '<C-Space>', function ()
+                        vim.keymap.set('i', '<C-Space>', function()
                             vim.lsp.completion.get()
                         end)
                     end
 
                     if client:supports_method('textDocument/formatting') then
+                        --[[
                         -- format current buffer on save
                         vim.api.nvim_create_autocmd('BufWritePre', {
                             buffer = ev.buf,
@@ -35,6 +36,10 @@ return {
                                 vim.lsp.buf.format({ buffnr = ev.buf, id = client.id })
                             end,
                         })
+                        ]]
+                        vim.keymap.set('n', '<leader>lf', function()
+                            vim.lsp.buf.format({ buffnr = ev.buf, id = client.id })
+                        end)
                     end
 
                     -- location for any lsp-specific remaps
