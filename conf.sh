@@ -2,12 +2,28 @@
 
 # Basic personal config loading
 
+set -Eeuo pipefail
+
+trap 'echo "Error on line $LINENO: $BASH_COMMAND"' ERR
+
 fatal() {
 	echo '[fatal]' "$@" >&2
 	exit 1
 }
 
+if [[ "$EUID" -eq 0 ]]; then
+    fatal "Do not run this script as root"
+fi
+
 DOTFILES=(vimrc bashrc tmux.conf)
+ON_ARCH=0
+if [[ -f /etc/os-release ]]; then
+    source /etc/os-release
+    if [[ "$ID" == arch ]]; then
+        ON_ARCH=1       
+    fi
+fi
+
 
 safe_link() {
     local src=$1
@@ -18,8 +34,12 @@ safe_link() {
         mv "$dest" "$dest.bak"
     fi
 
-    echo "[link] $dest -> $src"
-    ln -nsf "$PWD/$src" "$dest"
+    echo "[linking] $dest -> $src"
+    if [[ "$dest" == /etc/* ]]; then
+        sudo ln -nsf "$PWD/$src" "$dest"
+    else
+        ln -nsf "$PWD/$src" "$dest"
+    fi
 }
 
 for config in "${DOTFILES[@]}"; do
@@ -33,15 +53,19 @@ done
 keyd_setup() {
 	# remaps capslock to esc and esc to capslock
 	if ! command -v keyd >/dev/null 2>&1 ; then
-		echo "installing keyd..."
-		git clone --branch v2.5.0 --depth=1 https://github.com/rvaiya/keyd.git  || fatal 'failed to clone keyd git repo'
-		cd keyd
-		make || fatal 'failed to make'
-		sudo make install || fatal 'failed to make install'
-		cd ..
+        if [[ "$ON_ARCH" -eq 1 ]]; then
+            sudo pacman -S keyd
+        else
+            echo "installing keyd..."
+            git clone --branch v2.5.0 --depth=1 https://github.com/rvaiya/keyd.git keyd_repo  || fatal 'failed to clone keyd git repo'
+            cd keyd_repo
+            make || fatal 'failed to make'
+            sudo make install || fatal 'failed to make install'
+            cd ..
+        fi
 	fi
 	sudo systemctl enable --now keyd
-	sudo cp default.conf /etc/keyd/default.conf
+    safe_link keyd /etc/keyd/default.conf
 	sudo keyd reload
 }
 
