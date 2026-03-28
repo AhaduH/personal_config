@@ -138,6 +138,7 @@ keyd_setup() {
     sudo systemctl enable --now keyd
     sudo mkdir -p /etc/keyd
     safe_link "$MY_CONFIGS_DIR/keyd" /etc/keyd/default.conf
+    echo "[remap]: CAPS <- -> ESC"
     sudo keyd reload
 }
  
