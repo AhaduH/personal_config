@@ -18,7 +18,7 @@ MY_CONFIGS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 declare -A PACKAGES=(
     [vim]="vim"
     [tmux.conf]="tmux"
-    [nvim]="neovim"
+    [nvim]="neovim" # may need nodejs and ripgrep (depending on copilot integration / things like telescope)
     [ghostty]="ghostty"
     # Configs below are a bit out of scope, not a full desktop setup tool, still keep an idea of essential packages"
     #[hypr]="hyprland xdg-desktop-portal-hyprland hyprpolkitagent hyprpaper hyprshot hyprlock"
