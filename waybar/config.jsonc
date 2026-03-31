@@ -22,7 +22,8 @@
         "memory",
         "pulseaudio",
 	// "bluetooth",
-        "network"
+        "network",
+	"custom/power"
     ],
     "hyprland/workspaces": {
         "disable-scroll": true,
@@ -87,13 +88,13 @@
     "custom/power": {
         "format" : "⏻ ",
 		"tooltip": false,
-		"menu": "on-click",
-		"menu-file": "$HOME/.config/waybar/power_menu.xml", // Menu file in resources folder
-		"menu-actions": {
-			"shutdown": "shutdown",
-			"reboot": "reboot",
-			"suspend": "systemctl suspend",
-			"hibernate": "systemctl hibernate"
-		}
+		//"menu": "on-click",
+		"on-click": "$HOME/.config/waybar/powermenu.sh" // fuzzel for simple pop
+		//"menu-actions": {
+			//"shutdown": "shutdown",
+			//"reboot": "reboot",
+			//"suspend": "systemctl suspend",
+			//"hibernate": "systemctl hibernate"
+		//}
     }
 }
