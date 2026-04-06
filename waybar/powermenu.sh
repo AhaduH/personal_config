@@ -4,7 +4,7 @@ confirm () {
     printf "No\nYes" | fuzzel --width 20 --lines 7 --dmenu
 }
 
-choice=$(printf "Lock\nLogout\nReboot\nShutdown" | fuzzel --width 20 --lines 7 --dmenu)
+choice=$(printf "Lock\nSuspend\nReboot\nShutdown" | fuzzel --width 20 --lines 7 --dmenu)
 
 case "$choice" in
     Lock) hyprlock ;;
