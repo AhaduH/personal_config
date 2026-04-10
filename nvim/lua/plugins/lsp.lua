@@ -20,7 +20,7 @@ return {
                     if not client then return end
 
                     if client:supports_method('textDocument/completion') then
-                        vim.opt.completeopt = { "menu", "menuone", "noinsert", "fuzzy" }
+                        vim.opt.completeopt = { "menu", "menuone", "noselect" }
                         vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
                         -- trigger lsp completion (ex: after backspace, turn back on)
                         vim.keymap.set('i', '<C-Space>', function()
@@ -39,11 +39,21 @@ return {
                         })
                         ]]
                         vim.keymap.set('n', '<leader>lf', function()
-                            vim.lsp.buf.format({ buffnr = ev.buf, id = client.id })
+                            vim.lsp.buf.format({ bufnr = ev.buf, id = client.id })
                         end)
                     end
 
+                    -- if client:supports_method('textDocument/completion') then
+                    --     -- Optional: trigger autocompletion on EVERY keypress. May be slow!
+                    --     local chars = {}; for i = 32, 126 do table.insert(chars, string.char(i)) end
+                    --     client.server_capabilities.completionProvider.triggerCharacters = chars
+                    --     vim.lsp.completion.enable(true, client.id, args.buf, { autotrigger = true })
+                    -- end
+
                     -- location for any lsp-specific remaps
+                    vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "go to definition" })
+                    vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "go to decleration" })
+                    vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, { desc = "show function signature" })
                 end,
             })
 
