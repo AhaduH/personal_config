@@ -213,7 +213,39 @@ return {
             keymaps_help = {
                 border = nil,
             },
-        }) 
+        })
+
+        -- override to match netrw :Explore (oil is set as default)
+        -- kinda stupid
+
+        vim.api.nvim_create_user_command("Ex", function()
+            require("oil").open()
+        end, {})
+        vim.api.nvim_create_user_command("Sex", function(opts)
+            if opts.bang then
+                vim.cmd("split")
+                vim.cmd("wincmd p")
+            else
+                vim.cmd("split")
+            end
+            require("oil").open()
+        end, { bang = true })
+
+        vim.api.nvim_create_user_command("Vex", function(opts)
+            if opts.bang then
+                vim.cmd("vsplit")
+                vim.cmd("wincmd p")
+            else
+                vim.cmd("vsplit")
+            end
+            require("oil").open()
+        end, { bang = true })
+
+        vim.api.nvim_create_user_command("Tex", function()
+            vim.cmd("tabnew")
+            require("oil").open()
+        end, {})
+
     end
 
 }
