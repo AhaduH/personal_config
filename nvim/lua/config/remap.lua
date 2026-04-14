@@ -1,6 +1,7 @@
 vim.g.mapleader = " "
 
-vim.keymap.set("n", "<leader>m", vim.cmd.Ex, { desc = "" })
+-- vim.keymap.set("n", "<leader>m", vim.cmd.Ex, { desc = "open netrw" })
+vim.keymap.set("n", "<leader>o", "<CMD>Oil<CR>", { desc = "open parent dir using oil" })
 
 vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "page down centers" })
 vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "page up centers" })
