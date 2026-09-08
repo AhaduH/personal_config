@@ -2,42 +2,40 @@
 {
     // "layer": "top", // Waybar at top layer
     // "position": "bottom", // Waybar position (top|bottom|left|right)
-    "height": 24, // Waybar height (to be removed for auto height)
+    "height": 25, // Waybar height (to be removed for auto height)
     // "width": 1280, // Waybar width
     "spacing": 3, // Gaps between modules (4px)
     // Choose the order of the modules
     "modules-left": [
-        "hyprland/workspaces",
-        "hyprland/submap",
+        "hyprland/workspaces"
+        // "hyprland/submap", // for activating different key maps / modes
         // "sway/scratchpad",
-        "custom/media"
+        // "custom/media"
     ],
     "modules-center": [
         // "hyprland/window"
-	"clock"
+	    "clock"
     ],
     "modules-right": [
-	"tray",
+	    "tray",
         "cpu",
         "memory",
         "pulseaudio",
-	// "bluetooth",
+	//  "bluetooth",
         "network",
-	"custom/power"
+        "battery",
+	    "custom/power"
     ],
     "hyprland/workspaces": {
         "disable-scroll": true,
         "all-outputs": true,
         "warp-on-scroll": false,
         "format": "{name}",
-	"sort-by-number": true
-    },
-    "hyprland/submap": {
-        "format": "<span style=\"italic\">{}</span>"
+	    "sort-by-number": true
     },
     "tray": {
-        // "icon-size": 21,
-        "spacing": 10
+        "icon-size": 14,
+        "spacing": 6
         // "icons": {
         //   "blueman": "bluetooth",
         //   "TelegramDesktop": "$HOME/.local/share/icons/hicolor/16x16/apps/telegram.png"
@@ -45,13 +43,13 @@
     },
     "clock": {
         // "timezone": "America/New_York",
-	"format": "{:%a %b %d %H:%M}",
-        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+        "format": "{:%a %d   %H:%M}",
+        "tooltip-format": "<big>{:%B %Y}</big>\n<tt>{calendar}</tt>"
         // "format-alt": "{:%Y-%m-%d}"
     },
     "cpu": {
         "format": " {usage}%",
-	"on-click": "hyprctl dispatch exec '[float;size 1300 700;center] ghostty -e btop'"
+	    "on-click": "hyprctl dispatch exec '[float;size 1300 700;center] ghostty -e btop'"
     },
     "memory": {
         "format": " {percentage}% ",
@@ -59,37 +57,61 @@
     },
     "network": {
         // "interface": "wlp2*", // (Optional) To force the use of this interface
-        "format-wifi": "{essid} ({signalStrength}%) ",
-        "format-ethernet": "{ipaddr}/{cidr} ",
-        "tooltip-format": "{ifname} via {gwaddr} ",
-        "format-linked": "{ifname} (No IP) ",
-        "format-disconnected": "Disconnected ⚠",
-        "format-alt": "{ifname}: {ipaddr}/{cidr}"
+        "format-wifi": "  {signalStrength}%",
+        "format-ethernet": "󰈀",
+        "format-disconnected": "󰤭",
+        "format-alt": "{ifname}: {ipaddr}/{cidr}",
+        "tooltip-format-wifi": "{essid}\nSignal: {signalStrength}%\nIP: {ipaddr}/{cidr}",
+        "tooltip-format-ethernet": "Ethernet\nIP: {ipaddr}/{cidr}",
+        "tooltip-format-disconnected": "Disconnected",
+        "on-click": "hyprctl dispatch exec '[float;size 1300 700;center] ghostty -e nmtui"
     },
     "pulseaudio": {
         // "scroll-step": 1, // %, can be a float
-        "format": "{volume}% {icon} {format_source}",
-        "format-bluetooth": "{volume}% {icon} {format_source}",
-        "format-bluetooth-muted": " {icon} {format_source}",
-        "format-muted": " {format_source}",
-        "format-source": "{volume}% ",
-        "format-source-muted": "",
+        "format": "{icon} {volume}%",
+        "format-muted": "󰝟 muted",
+        "format-bluetooth": "{icon} {volume}%",
+        // "format-bluetooth-muted": "{icon} {format_source}",
+        // "format-source": "{volume}% ",
+        // "format-source-muted": "",
         "format-icons": {
             "headphone": "",
-            "hands-free": "",
-            "headset": "",
-            "phone": "",
-            "portable": "",
-            "car": "",
             "default": ["", "", ""]
         },
-        "on-click": "hyprctl dispatch exec '[float;size 1300 750;center] pavucontrol'"
+        "on-click": "hyprctl dispatch exec '[float;size 1300 750;center] pavucontrol'",
+        "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle" // mute
+    },
+    "battery": {
+        "states": {
+            "warning": 25,
+            "critical": 12
+        },
+
+        "format": "{icon} {capacity}%",
+        "format-charging": "󰂄 {capacity}%",
+        "format-plugged": "󰚥 {capacity}%",
+
+        "format-icons": [
+            "󰁺",
+            "󰁻",
+            "󰁼",
+            "󰁽",
+            "󰁾",
+            "󰁿",
+            "󰂀",
+            "󰂁",
+            "󰂂",
+            "󰁹"
+        ],
+
+        "tooltip-format": "{capacity}%\n{timeTo}",
+        "on-click-right": "~/.config/waybar/scripts/cycle_power_profile.sh"
     },
     "custom/power": {
-        "format" : "⏻ ",
+        "format" : "⏻",
 		"tooltip": false,
 		//"menu": "on-click",
-		"on-click": "$HOME/.config/waybar/powermenu.sh" // fuzzel for simple pop
+		"on-click": "$HOME/.config/waybar/scripts/powermenu.sh" // fuzzel for simple pop
 		//"menu-actions": {
 			//"shutdown": "shutdown",
 			//"reboot": "reboot",
