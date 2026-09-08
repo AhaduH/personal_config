@@ -1,1 +1,68 @@
-font=JetBrainsMono Nerd Font, Noto Color Emoji
+# ---------- Layout ----------
+
+width=360
+height=120
+margin=12
+padding=12
+border-size=2
+border-radius=8
+
+anchor=top-right
+layer=overlay
+
+font=JetBrainsMono Nerd Font 11, Noto Color Emoji
+
+max-visible=5
+sort=-time
+
+
+# ---------- Base theme ----------
+
+background-color=#181e27e8
+text-color=#dce2e9
+border-color=#8fa9c1
+
+progress-color=over #8fa9c1
+
+icons=1
+max-icon-size=48
+
+markup=1
+
+
+# ---------- Timing ----------
+
+default-timeout=7000
+ignore-timeout=0
+
+
+# ---------- Grouping ----------
+
+group-by=app-name
+
+
+# ---------- Normal urgency ----------
+
+[urgency=normal]
+background-color=#181e27f0
+text-color=#dce2e9
+border-color=#8fa9c1
+default-timeout=7000
+
+
+# ---------- Low urgency ----------
+
+[urgency=low]
+background-color=#181e27e8
+text-color=#96a2b1
+border-color=#495b6e
+default-timeout=5000
+
+
+# ---------- Critical urgency ----------
+
+[urgency=critical]
+background-color=#241c23f5
+text-color=#f2dce0
+border-color=#d88c96
+default-timeout=0
