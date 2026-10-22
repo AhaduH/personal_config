@@ -57,14 +57,14 @@
     },
     "network": {
         // "interface": "wlp2*", // (Optional) To force the use of this interface
+        //"format-alt": "{ifname}: {ipaddr}/{cidr}",
         "format-wifi": "  {signalStrength}%",
         "format-ethernet": "󰈀",
         "format-disconnected": "󰤭",
-        "format-alt": "{ifname}: {ipaddr}/{cidr}",
         "tooltip-format-wifi": "{essid}\nSignal: {signalStrength}%\nIP: {ipaddr}/{cidr}",
         "tooltip-format-ethernet": "Ethernet\nIP: {ipaddr}/{cidr}",
         "tooltip-format-disconnected": "Disconnected",
-        "on-click": "hyprctl dispatch exec '[float;size 1300 700;center] ghostty -e nmtui"
+        "on-click": "hyprctl dispatch exec '[float;size 1300 700;center] ghostty -e nmtui'"
     },
     "pulseaudio": {
         // "scroll-step": 1, // %, can be a float
