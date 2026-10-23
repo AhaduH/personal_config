@@ -1,6 +1,11 @@
 return {
     "mbbill/undotree",
-    config = function()
-        vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
-    end
+    cmd = "UndotreeToggle",
+    keys = {
+        {
+            "<leader>u",
+            "<cmd>UndotreeToggle<CR>",
+            desc = "Undo tree",
+        },
+    },
 }

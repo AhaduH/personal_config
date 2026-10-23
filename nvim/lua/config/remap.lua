@@ -17,8 +17,9 @@ vim.keymap.set("n", "<leader>Y", [["+Y]], { desc = "yank entire line into global
 
 vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "paste without overwriting default register" })
 
-vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz", { desc = "next item in local location list" })
-vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz", { desc = "prev item in local location list" })
+-- already default [q and ]q
+-- vim.keymap.set("n", "<leader>k", "<cmd>cnext<CR>zz", { desc = "next item in local quickfix list" })
+-- vim.keymap.set("n", "<leader>j", "<cmd>cprev<CR>zz", { desc = "prev item in local quickfix list" })
 
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "<Esc> unhighlights searches" })
 
@@ -26,3 +27,8 @@ vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "<Esc> unhighlights
 -- vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "go to definition" })
 -- vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "go to decleration" })
 -- vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, { desc = "show function signature" })
+
+-- -vim.keymap.set("n", "<leader>u", function()
+--     vim.cmd("packadd nvim.undotree")
+--     vim.cmd("Undotree")
+-- end, { desc = "Native undo tree" })-
