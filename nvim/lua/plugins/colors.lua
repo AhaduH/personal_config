@@ -45,8 +45,8 @@ return {
     {
         "rose-pine/neovim",
         name = "rose-pine",
-        lazy = false,
-        priority = 1000,
+        lazy = true,
+        -- priority = 1000,
         config = function()
             require("rose-pine").setup({
                 variant = "auto", -- auto, main, moon, or dawn
@@ -129,15 +129,15 @@ return {
 
                 -- vim.cmd("colorscheme rose-pine")
                 -- vim.cmd("colorscheme rose-pine-main")
-                vim.cmd("colorscheme rose-pine-moon")
+                -- vim.cmd("colorscheme rose-pine-moon")
                 -- vim.cmd("colorscheme rose-pine-dawn")
             end
         },
 
         {
             "vague-theme/vague.nvim",
-            lazy = true, -- make sure we load this during startup if it is your main colorscheme
-            -- priority = 1000, -- make sure to load this before all the other plugins
+            lazy = false,
+            priority = 1000, -- make sure to load this before all the other plugins
             config = function()
                 -- NOTE: you do not need to call setup if you don't want to.
                 require("vague").setup({
@@ -178,7 +178,7 @@ return {
                         delta = "#f3be7c",
                     }
                 })
-                -- vim.cmd("colorscheme vague")
+                vim.cmd("colorscheme vague")
             end
         },
 

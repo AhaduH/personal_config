@@ -8,7 +8,7 @@ return {
         },
 
         opts = {
-            ensure_installed = { "clangd", "lua_ls" },
+            ensure_installed = { "clangd", "lua_ls", "pyright" },
             -- ensure_installed = { "clangd", "rust_analyzer", "gopls", "pyright", "ts_ls", "lua_ls", "zls" },
             automatic_enable = true,
         },
@@ -118,7 +118,9 @@ return {
                 -- virtual_text = { current_line = true },
                 virtual_lines = {
                     current_line = true,
+                    overflow = "wrap",
                 },
+                severity_sort = true,
             })
 
             -- Mason setup runs once, after LspAttach is registered.

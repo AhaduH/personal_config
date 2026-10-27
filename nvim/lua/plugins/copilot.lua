@@ -8,7 +8,7 @@ return {
                 if copilot_enabled then
                     vim.cmd("Copilot disable")
                     copilot_enabled = false
-                else 
+                else
                     vim.cmd("Copilot enable")
                     copilot_enabled = true
                 end
