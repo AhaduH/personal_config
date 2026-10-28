@@ -1,7 +1,7 @@
 vim.g.mapleader = " "
 
 -- vim.keymap.set("n", "<leader>m", vim.cmd.Ex, { desc = "open netrw" })
-vim.keymap.set("n", "<leader>o", "<CMD>Oil<CR>", { desc = "open parent dir using oil" })
+vim.keymap.set("n", "<leader>e", "<CMD>Oil<CR>", { desc = "open parent dir using oil" })
 
 vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "page down centers" })
 vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "page up centers" })
@@ -9,8 +9,8 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "page up centers" })
 vim.keymap.set("n", "n", "nzzzv", { desc = "next search centers and opens folds" })
 vim.keymap.set("n", "N", "Nzzzv", { desc = "prev search centers and opens folds" })
 
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "move line down" })
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "move line up" })
+vim.keymap.set("x", "<M-j>", ":m '>+1<CR>gv=gv", { desc = "move line down" })
+vim.keymap.set("x", "<M-k>", ":m '<-2<CR>gv=gv", { desc = "move line up" })
 
 vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]], { desc = "yank into global clipboard" })
 vim.keymap.set("n", "<leader>Y", [["+Y]], { desc = "yank entire line into global clipboard" })

@@ -149,7 +149,56 @@ return {
                     italic = false,
 
                     -- Override highlights or add new highlights
-                    on_highlights = function(highlights, colors) end,
+                    on_highlights = function(highlights, colors)
+
+                        -- visual selection
+                        highlights.Visual = {
+                            bg = "#40474f"
+                        }
+
+
+                        -- status and tab lines
+                        highlights.StatusLine = {
+                            fg = "#cdcdcd",
+                            bg = "#2b2c36",
+                            bold = true,
+                        }
+
+                        highlights.StatusLineNC = {
+                            fg = "#7d808c",
+                            bg = "#262832",
+                        }
+
+                        highlights.TabLine = {
+                            fg = "#929292",
+                            bg = "#262832",
+                        }
+
+                        highlights.TabLineFill = {
+                            bg = "#262832",
+                        }
+
+                        highlights.TabLineSel = {
+                            fg = "#c2c2c8",
+                            bg = "#2b2c36",
+                            bold = true,
+                        }
+
+                        -- search / substitution highlights
+                        highlights.CurSearch = {
+                            fg = "#141415",
+                            bg = "#8195ae",
+                            bold = true,
+                        }
+
+                        highlights.IncSearch = { link = "CurSearch" }
+                        highlights.Substitute = { link = "CurSearch" }
+
+                        -- qoc for macros (dont like all being same coloUr)
+                        highlights.Define = { fg = colors.parameter }
+                        highlights.Macro = { fg = colors.number }
+
+                    end,
 
                     -- Override colors
                     colors = {

@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+# project-centered tmux launcher. 
+# requires Bash, tmux, git, and coreutils.
+# fzf for interactive selection (`proj` with no arguments).
+set -euo pipefail
+
+usage() {
+    cat <<'HELP'
+Usage: proj [PATH]
+       proj                 Select a project interactively (fzf)
+       proj .               Open the Git project containing the current directory
+       proj /path/to/project
+       proj --list          List running tmux sessions
+       proj --help          Show this help
+
+Set PROJ_ROOTS to a colon-separated list of directories to scan, e.g.:
+  export PROJ_ROOTS="$HOME/school:$HOME/dev"
+
+Projects selected explicitly are remembered for future fzf selection.
+HELP
+}
+
+die() { printf 'proj: %s\n' "$*" >&2; exit 1; }
+
+(( $# <= 1 )) || { usage >&2; exit 2; }
+case "${1:-}" in
+    -h|--help) usage; exit 0 ;;
+    -l|--list)
+        command -v tmux >/dev/null 2>&1 || die 'tmux is not installed'
+        tmux list-sessions 2>/dev/null || printf 'No running tmux sessions.\n'
+        exit 0 ;;
+esac
+
+command -v tmux >/dev/null 2>&1 || die 'tmux is not installed'
+
+# resolve a supplied directory to a real path
+# git directories/worktrees resolve to their top-level root
+# non-git directories remain valid projects
+project_root() {
+    local dir=$1 result
+    [[ -d "$dir" ]] || return 1
+    if result=$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null); then
+        (cd -- "$result" && pwd -P)
+    else
+        (cd -- "$dir" && pwd -P)
+    fi
+}
+
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/proj"
+registry="$state_dir/projects"
+
+if (( $# == 1 )); then
+    requested=$1
+    [[ $requested == '~/'* ]] && requested="$HOME/${requested:2}"
+    root=$(project_root "$requested") || die "not a directory: $requested"
+else
+    command -v fzf >/dev/null 2>&1 || die 'fzf is required for selection; or supply a path: proj .'
+
+    declare -A seen=()
+    declare -a projects=()
+    add_candidate() {
+        local path resolved
+        path=$1
+        [[ -d "$path" ]] || return 0
+        resolved=$(project_root "$path") || return 0
+        [[ -n "${seen[$resolved]+yes}" ]] && return 0
+        seen["$resolved"]=1
+        projects+=("$resolved")
+    }
+
+    # Previously visited paths remain selectable after reboot.
+    if [[ -f "$registry" ]]; then
+        while IFS= read -r path; do
+            [[ -n $path ]] && add_candidate "$path"
+        done < "$registry"
+    fi
+
+    # Discover immediate child directories, plus nested Git repositories and
+    # worktrees (whose .git may be a file). Avoid scanning the entire home dir.
+    roots="${PROJ_ROOTS:-$HOME/projects:$HOME/dev:$HOME/src:$HOME/school}"
+    IFS=: read -r -a root_dirs <<< "$roots"
+    for search_root in "${root_dirs[@]}"; do
+        [[ -d "$search_root" ]] || continue
+        [[ -e "$search_root/.git" ]] && add_candidate "$search_root"
+        while IFS= read -r -d '' path; do
+            add_candidate "$path"
+        done < <(find "$search_root" -mindepth 1 -maxdepth 1 -type d -print0 2>/dev/null)
+        while IFS= read -r -d '' path; do
+            add_candidate "${path%/.git}"
+        done < <(find "$search_root" -mindepth 1 -maxdepth 5 \
+            \( -name .git -print0 -prune \) -o \
+            \( -type d \( -name node_modules -o -name .venv -o -name .cache \) -prune \) \
+            2>/dev/null)
+    done
+
+    (( ${#projects[@]} )) || die 'no projects discovered. Set PROJ_ROOTS or run proj /path/to/project first.'
+    # Paths containing newlines are outside this simple fzf/registry format.
+    root=$(printf '%s\n' "${projects[@]}" | LC_ALL=C sort -u | \
+        fzf --height=60% --reverse --prompt='project > ') || exit 0
+    [[ -n "$root" ]] || exit 0
+fi
+
+# The registry uses one absolute path per line.
+[[ $root != *$'\n'* ]] || die 'project paths containing newlines are not supported'
+
+basename=${root##*/}
+slug=$(printf '%s' "$basename" | LC_ALL=C sed -E 's/[^A-Za-z0-9_-]+/-/g; s/^-+//; s/-+$//')
+slug=${slug:0:32}
+[[ -n $slug ]] || slug=project
+read -r checksum _ < <(printf '%s' "$root" | cksum)
+printf -v suffix '%08x' "$checksum"
+session="${slug}-${suffix}"
+
+# Do not adopt unrelated tmux sessions that happen to share a generated name.
+if ! tmux has-session -t "=$session" 2>/dev/null; then
+    if tmux new-session -d -s "$session" -c "$root" -n editor; then
+        tmux set-option -t "=${session}:" @proj_root "$root"
+        # Respect the host's base-index (1 locally, often 0 on remote hosts).
+        editor_index=$(tmux display-message -p -t "${session}:" '#{window_index}')
+        [[ $editor_index =~ ^[0-9]+$ ]] || die 'could not find the editor window index'
+        run_index=$((editor_index + 1))
+        tmux new-window -d -t "${session}:${run_index}" -c "$root" -n run
+        tmux select-window -t "${session}:${editor_index}"
+
+        # Start the editor in an ordinary shell, so exiting Neovim keeps the
+        # editor window and shell alive. Remote hosts may only have Vim.
+        if command -v nvim >/dev/null 2>&1; then
+            tmux send-keys -t "${session}:${editor_index}" nvim Enter
+        elif command -v vim >/dev/null 2>&1; then
+            tmux send-keys -t "${session}:${editor_index}" vim Enter
+        fi
+    elif ! tmux has-session -t "=$session" 2>/dev/null; then
+        die "could not create tmux session $session"
+    fi
+fi
+
+associated_root=$(tmux show-option -qv -t "=${session}:" @proj_root)
+[[ $associated_root == "$root" ]] || die "session name collision: $session is not registered for $root"
+
+mkdir -p -- "$state_dir"
+if [[ ! -f "$registry" ]] || ! grep -Fxq -- "$root" "$registry"; then
+    printf '%s\n' "$root" >> "$registry"
+fi
+
+if [[ -n ${TMUX:-} ]]; then
+    tmux switch-client -t "=$session"
+else
+    tmux attach-session -t "=$session"
+fi

@@ -49,11 +49,11 @@
     },
     "cpu": {
         "format": " {usage}%",
-	    "on-click": "hyprctl dispatch exec '[float;size 1300 700;center] ghostty -e btop'"
+	    "on-click": "ghostty --title=waybar-btop -e btop"
     },
     "memory": {
         "format": " {percentage}% ",
-	"on-click": "hyprctl dispatch exec '[float;size 1300 700;center] ghostty -e btop'"
+	"on-click": "ghostty --title=waybar-btop -e btop"
     },
     "network": {
         // "interface": "wlp2*", // (Optional) To force the use of this interface
@@ -64,7 +64,7 @@
         "tooltip-format-wifi": "{essid}\nSignal: {signalStrength}%\nIP: {ipaddr}/{cidr}",
         "tooltip-format-ethernet": "Ethernet\nIP: {ipaddr}/{cidr}",
         "tooltip-format-disconnected": "Disconnected",
-        "on-click": "hyprctl dispatch exec '[float;size 1300 700;center] ghostty -e nmtui'"
+        "on-click": "ghostty --title=waybar-nmtui -e nmtui"
     },
     "pulseaudio": {
         // "scroll-step": 1, // %, can be a float
@@ -78,7 +78,7 @@
             "headphone": "",
             "default": ["", "", ""]
         },
-        "on-click": "hyprctl dispatch exec '[float;size 1300 750;center] pavucontrol'",
+        "on-click": "pavucontrol",
         "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle" // mute
     },
     "battery": {

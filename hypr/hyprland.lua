@@ -220,3 +220,28 @@ hl.window_rule({
     name = "move-hyprland-run", match = { class = "hyprland-run" },
     move = "20 monitor_h-120", float = true,
 })
+
+-- waybar on-click floating window popups
+local function utility_window(name, match)
+    hl.window_rule({
+        name = name,
+        match = match,
+        float = true,
+        size = { 1100, 500 },
+        center = true,
+    })
+end
+
+utility_window("waybar-btop", {
+    class = "com.mitchellh.ghostty",
+    initial_title = "waybar-btop",
+})
+
+utility_window("waybar-nmtui", {
+    class = "com.mitchellh.ghostty",
+    initial_title = "waybar-nmtui",
+})
+
+utility_window("waybar-pavucontrol", {
+    class = "org.pulseaudio.pavucontrol",
+})
